@@ -5,6 +5,15 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
+class QuestionManager(models.Manager):
+    def new(self):
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.added_at <= now
+
+    def popular(self):
+        return self.all().order_by('-rating')
+
+
 class Question(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
@@ -13,14 +22,7 @@ class Question(models.Model):
     author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     likes = models.ManyToManyField(User, related_name='likes')
 
-
-class QuestionManager(models.Manager):
-    def new(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.added_at <= now
-
-    def popular(self):
-        return self.all().order_by('-rating')
+    objects = QuestionManager()
 
 
 class Answer(models.Model):
