@@ -2,4 +2,9 @@
 {% block detail %}
     <h1>{{ question.title }}</h1>
     <p>{{ question.text }}</p>
+    <ul>
+        {% for answer in question.answer_set.all %}
+            <li>{{ answer.text }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}
