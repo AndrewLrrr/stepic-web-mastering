@@ -7,6 +7,7 @@ from django.views.decorators.http import require_GET
 from .models import Question
 
 
+PAGINATION_LIMIT = 100
 ITEMS_PER_PAGE = 10
 
 
@@ -34,32 +35,24 @@ def test(request, *args, **kwargs):
 
 def paginated_list(request, qs, prefix, name):
     name = '{}_{}'.format(prefix, name)
-    limit = request.GET.get('limit', ITEMS_PER_PAGE)
-    page = request.GET.get('page', 1)
-    paginator = Paginator(qs, limit)
-    paginator.url = '{}?page='.format(reverse(name))
-    page = paginator.page(page)
-    return render(request, '{}.html'.format(name), {
-        'paginator': paginator,
-        'page': page,
-        'qs': page.object_list,
-    })
-
-
-def paginate(request, qs):
     try:
         limit = int(request.GET.get('limit', ITEMS_PER_PAGE))
     except ValueError:
         limit = ITEMS_PER_PAGE
-    if limit > 100:
+    if limit > PAGINATION_LIMIT:
         limit = ITEMS_PER_PAGE
     try:
         page = int(request.GET.get('page', 1))
     except ValueError:
         raise Http404
     paginator = Paginator(qs, limit)
+    paginator.url = '{}?page='.format(reverse(name))
     try:
         page = paginator.page(page)
     except EmptyPage:
         page = paginator.page(paginator.num_pages)
-    return page
+    return render(request, '{}.html'.format(name), {
+        'paginator': paginator,
+        'page': page,
+        'qs': page.object_list,
+    })
