@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+
+    <h1>{% block header %}{% endblock %}</h1>
+
+    {% block list %}
+        <ul>
+            {% for obj in qs %}
+            <li><a href="{{ obj.get_url }}">{{ obj }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endblock %}
+
+    {% block pagination %}
+        <nav>
+            <ul class="pagination">
+                {% for p in paginator.page_range %}
+                    {% if p == page.number %}
+                        <li class="active">
+                    {% else %}
+                        <li>
+                    {% endif %}
+                    <a href="{{ paginator.url }}{{ p }}">{{ p }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endblock %}
+
+    </body>
+</html>
