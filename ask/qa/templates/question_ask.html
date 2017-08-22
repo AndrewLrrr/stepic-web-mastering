@@ -1,16 +1,9 @@
 {% extends "base_detail.html" %}
 {% block detail %}
-    <h1>{{ question.title }}</h1>
-    <p>{{ question.text }}</p>
-    <ul>
-        {% for answer in question.answer_set.all %}
-            <li>{{ answer.text }}</li>
-        {% endfor %}
-    </ul>
     {% for e in form.non_field_errors %}
         <div class="alert alert-danger">{{ e }}</div>
     {% endfor %}
-    <form class="form-horizontal" method="post" action="{{ question.get_url }}">
+    <form class="form-horizontal" method="post" action="{% url 'question_ask' %}">
         <fieldset>
             {% csrf_token %}
             {% for field in form %}

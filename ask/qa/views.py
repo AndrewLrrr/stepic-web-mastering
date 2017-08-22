@@ -1,10 +1,11 @@
 from django.core.paginator import Paginator, EmptyPage
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_GET
 
 from .models import Question
+from .forms import AskForm, AnswerForm
 
 
 PAGINATION_LIMIT = 100
@@ -23,10 +24,32 @@ def popular_questions(request):
     return paginated_list(request, questions, 'popular', 'questions')
 
 
-@require_GET
 def question_detail(request, pk):
     question = get_object_or_404(Question, pk=pk)
-    return render(request, 'question_detail.html', {'question': question})
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            url = question.get_url()
+            return HttpResponseRedirect(url)
+    else:
+        form = AnswerForm(initial={'question': question.pk})
+    return render(request, 'question_detail.html', {
+        'question': question,
+        'form': form
+    })
+
+
+def question_ask(request):
+    if request.method == 'POST':
+        form = AskForm(request.POST)
+        if form.is_valid():
+            question = form.save()
+            url = question.get_url()
+            return HttpResponseRedirect(url)
+    else:
+        form = AskForm()
+    return render(request, 'question_ask.html', {'form': form})
 
 
 def test(request, *args, **kwargs):
