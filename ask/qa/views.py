@@ -44,7 +44,6 @@ def question_detail(request, pk):
     })
 
 
-@login_required
 def question_ask(request):
     if request.method == 'POST':
         form = AskForm(request.POST)
