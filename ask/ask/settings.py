@@ -124,6 +124,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+LOGIN_URL = '/'
+
 try:
     from .dev.local_settings import *
 except ImportError:

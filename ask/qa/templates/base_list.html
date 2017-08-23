@@ -31,7 +31,9 @@
         </nav>
     {% endblock %}
 
-    <a href="{% url 'question_ask' %}">Ask question</a>
+    {% if user.is_authenticated %}
+        <a href="{% url 'qa:question_ask' %}">Ask question</a>
+    {% endif %}
 
     </body>
 </html>
